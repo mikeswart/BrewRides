@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CapitalBreweryBikeClub.Pages;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -29,12 +29,14 @@ namespace CapitalBreweryBikeClub
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
 
-            services.AddMvc()
+            services.AddRazorPages()
                 .AddNewtonsoftJson();
+
+            services.AddSingleton<RouteProvider>();
+            services.AddSingleton<ScheduleProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,14 +56,16 @@ namespace CapitalBreweryBikeClub
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting(routes =>
-            {
-                routes.MapRazorPages();
-            });
-
             app.UseCookiePolicy();
 
+            app.UseRouting();
+
             app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+            });
         }
     }
 }

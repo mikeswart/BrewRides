@@ -1,0 +1,17 @@
+﻿@page "/Routes/{routeName}"
+@model CapitalBreweryBikeClub.Pages.Routes.ViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+    <iframe title=@Model.Route.Name src=@Model.EmbedLink width=300 height=400 frameborder="0"></iframe>
+</body>
+</html>

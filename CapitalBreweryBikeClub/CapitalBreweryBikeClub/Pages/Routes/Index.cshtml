@@ -1,0 +1,20 @@
+﻿@page
+@model CapitalBreweryBikeClub.Pages.Routes.IndexModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    @foreach (var route in @Model.Routes)
+    {
+        <h2><a href="/Routes/@route.link">@route.info.Name</a> (@route.info.Mileage)</h2>
+    }
+</body>
+</html>

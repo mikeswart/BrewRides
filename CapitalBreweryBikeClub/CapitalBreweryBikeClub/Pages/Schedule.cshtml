@@ -1,0 +1,23 @@
+﻿@page
+@model CapitalBreweryBikeClub.Pages.ScheduleModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>DailyRouteSchedule</title>
+</head>
+<body>
+<h2>Week of @Model.BeginningOfWeek.ToString("dd MMMMM")</h2>
+
+@foreach (var scheduleItem in Model.Routes)
+{
+    <h3>@scheduleItem.DateTime.ToString("dddd")</h3>
+    <div>Route: @scheduleItem.Route.Name</div>
+}
+</body>
+</html>
