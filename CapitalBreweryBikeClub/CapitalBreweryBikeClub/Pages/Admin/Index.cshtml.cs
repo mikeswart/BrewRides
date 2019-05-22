@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -38,20 +39,22 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             RouteProvider.Refresh();
         }
 
-        public void OnPostScheduleRoute()
+        public async Task<IActionResult> OnPostScheduleRouteAsync()
         {
             if (!DateTime.TryParse(DateToAdd, out var dateToAdd))
             {
-                return;
+                return Page();
             }
 
             var routeToAdd = RouteProvider.Routes.FirstOrDefault(info => info.Name.Equals(RouteToAdd));
             if (routeToAdd == null)
             {
-                return;
+                return Page();
             }
 
             ScheduleProvider.Add(new DailyRouteSchedule(dateToAdd.Date, routeToAdd));
+
+            return RedirectToPage();
         }
 
         private static IEnumerable<SelectListItem> DaysInWeek(DateTime startTime, params DayOfWeek[] daysOfWeek)

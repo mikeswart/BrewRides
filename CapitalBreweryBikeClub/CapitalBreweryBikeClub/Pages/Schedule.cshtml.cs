@@ -9,7 +9,6 @@ namespace CapitalBreweryBikeClub.Pages
 {
     public class ScheduleModel : PageModel
     {
-        private readonly ScheduleProvider _scheduleProvider;
         public RouteProvider RouteProvider { get; }
         public DateTime BeginningOfWeek { get; }
 
@@ -18,7 +17,6 @@ namespace CapitalBreweryBikeClub.Pages
 
         public ScheduleModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider)
         {
-            _scheduleProvider = scheduleProvider;
             RouteProvider = routeProvider;
             BeginningOfWeek = DateTime.Today;
 

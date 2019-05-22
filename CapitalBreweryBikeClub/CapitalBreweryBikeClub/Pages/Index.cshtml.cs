@@ -13,5 +13,10 @@ namespace CapitalBreweryBikeClub.Pages
         {
 
         }
+
+        public void OnPost()
+        {
+            ViewData["Title"] = "It Changed";
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
@@ -33,10 +34,11 @@ namespace CapitalBreweryBikeClub
             fileCache.Save(schedules.Select(ScheduleData.FromDailyRouteSchedule));
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         private sealed class ScheduleData
         {
-            private DateTime Date { get; set; }
-            private string RouteName { get; set; }
+            public DateTime Date { get; set; }
+            public string RouteName { get; set; }
 
             public DailyRouteSchedule ToDailyRouteSchedule(RouteProvider routeProvider)
             {

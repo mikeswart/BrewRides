@@ -37,7 +37,7 @@ namespace CapitalBreweryBikeClub
                     fileCache.Save(routes);
                 }
 
-                allRoutes = routes.ToDictionary(info => info.Name.ToLower().Replace(' ', '-'));
+                allRoutes = routes.ToDictionary(info => RouteInfo.GetWebFriendlyName(info.Name));
             };
 
             refreshAction(false);
