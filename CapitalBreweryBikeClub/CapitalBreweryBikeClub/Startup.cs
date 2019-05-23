@@ -29,8 +29,10 @@ namespace CapitalBreweryBikeClub
                 options.CheckConsentNeeded = context => true;
             });
 
-
-            services.AddRazorPages()
+            services.AddRazorPages(options =>
+                {
+                    options.Conventions.AddPageRoute("/Schedule", "");
+                })
                 .AddNewtonsoftJson();
 
             services.AddSingleton<RouteProvider>();
