@@ -2,16 +2,18 @@
 @model CapitalBreweryBikeClub.Pages.Routes.ViewModel
 @{
     Layout = "Shared/_Layout";
+    ViewData["Title"] = $"Brew Routes - {Model.Route.Route.Name}";
 }
 
 <!DOCTYPE html>
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>View</title>
+    <meta name="viewport" content="width=device-width"/>
 </head>
 <body>
-    <iframe title=@Model.Route.Name src=@Model.EmbedLink width=300 height=400 frameborder="0"></iframe>
+<div class="centeredtext">
+    @await Component.InvokeAsync("ScheduleCard", @Model.Route)
+</div>
 </body>
 </html>

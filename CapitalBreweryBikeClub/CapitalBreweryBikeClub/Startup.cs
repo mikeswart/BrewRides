@@ -31,10 +31,9 @@ namespace CapitalBreweryBikeClub
 
             services.AddRazorPages(options =>
                 {
-                    options.Conventions.AddPageRoute("/Schedule", "");
+                    //options.Conventions.AddPageRoute("/Schedule", "");
                 })
                 .AddNewtonsoftJson();
-
             services.AddSingleton<RouteProvider>();
             services.AddSingleton<ScheduleProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

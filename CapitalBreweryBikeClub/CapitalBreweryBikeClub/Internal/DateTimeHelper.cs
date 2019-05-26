@@ -12,7 +12,7 @@ namespace CapitalBreweryBikeClub.Internal
                 currentTime = currentTime.AddDays(-1);
             }
 
-            return currentTime;
+            return currentTime.Date;
         }
     }
 }

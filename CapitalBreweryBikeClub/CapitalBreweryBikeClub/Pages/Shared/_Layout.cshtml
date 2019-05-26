@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - CapitalBreweryBikeClub</title>
+    <title>@ViewData["Title"]</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -22,11 +22,11 @@
 <body>
 <header>
     <div class="menuHeader">
-        <a class="menuItem menuColor" is-active-route asp-area="" asp-page="/Schedule">
+        <a class="menuItem menuColor" is-active-route asp-page="/Index">
             <i class="fa fa-calendar fa-3x"></i>
             <span class="menuText">Schedule</span>
         </a>
-        <a class="menuItem menuColor" is-active-route asp-area="" asp-page="/Routes">
+        <a class="menuItem menuColor" is-active-route-folder asp-page="/Routes/Index">
             <i class="far fa-map fa-3x"></i>
             <span class="menuText">Routes</span>
         </a>
@@ -39,9 +39,7 @@
 </div>
 
 <footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2019 - CapitalBreweryBikeClub - <a asp-area="" asp-page="/Privacy">Privacy</a>
-    </div>
+    <div class="container">&copy; 2019 - BrewRi.de</div>
 </footer>
 
 <environment include="Development">

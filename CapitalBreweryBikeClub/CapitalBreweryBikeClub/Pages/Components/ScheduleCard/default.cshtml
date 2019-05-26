@@ -1,0 +1,17 @@
+﻿@model CapitalBreweryBikeClub.Model.DailyRouteSchedule
+
+<div class="card paddedContent fixed">
+    @if (Model.DateTime != DateTime.MinValue)
+    {
+        <h5 class="card-header centeredtext">
+            @Model.DateTime.ToString("dddd")
+        </h5>
+    }
+    <div class="card-body">
+        <iframe src=@Model.Links.EmbedLink width=300 height=400 frameborder="0"></iframe>
+    </div>
+    <div class="card-footer routefooter">
+        <a href="@Model.Links.FitLink" class="btn btn-primary">.FIT</a>
+        <a href="@Model.Links.CueLink" class="btn btn-primary">Cue</a>
+    </div>
+</div>

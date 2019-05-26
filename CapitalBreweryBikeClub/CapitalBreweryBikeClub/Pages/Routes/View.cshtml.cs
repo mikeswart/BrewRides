@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,11 +7,9 @@ namespace CapitalBreweryBikeClub.Pages.Routes
 {
     public class ViewModel : PageModel
     {
-        public string EmbedLink { get; set; }
-        public RouteInfo Route { get; set; }
+        public DailyRouteSchedule Route { get; private set; }
 
         private readonly RouteProvider routeProvider;
-
 
         public ViewModel(RouteProvider routeProvider)
         {
@@ -23,13 +18,13 @@ namespace CapitalBreweryBikeClub.Pages.Routes
 
         public IActionResult OnGet(string routeName)
         {
-            Route = routeProvider.Get(routeName);
-            if (Route == null)
+            var route = routeProvider.Get(routeName);
+            if (route == null)
             {
                 return NotFound();
             }
 
-            EmbedLink = $"https://ridewithgps.com/routes/{Route.RideWithGpsId}/embed";
+            Route = new DailyRouteSchedule(DateTime.MinValue, route);
             return Page();
         }
     }

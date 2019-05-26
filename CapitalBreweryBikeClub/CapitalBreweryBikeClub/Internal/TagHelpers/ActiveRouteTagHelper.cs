@@ -1,68 +1,22 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace CapitalBreweryBikeClub.Internal.TagHelpers
 {
-    //public static class HtmlHelperExtensions
-    //{
-    //    public static string IsSelected(this IHtmlHelper htmlHelper, string controllers, string actions, string cssClass = "selected")
-    //    {
-    //        var currentAction = htmlHelper.ViewContext.RouteData.Values["action"] as string;
-    //        var currentController = htmlHelper.ViewContext.RouteData.Values["controller"] as string;
-
-    //        IEnumerable<string> acceptedActions = (actions ?? currentAction).Split(',');
-    //        IEnumerable<string> acceptedControllers = (controllers ?? currentController).Split(',');
-
-    //        return acceptedActions.Contains(currentAction) && acceptedControllers.Contains(currentController)
-    //            ? cssClass
-    //            : string.Empty;
-    //    }
-    //}
-
     [HtmlTargetElement(Attributes = "is-active-route")]
     public class ActiveRouteTagHelper : TagHelper
     {
+        [HtmlAttributeName("asp-page")]
+        public string Page { get; set; }
+
         private readonly IHttpContextAccessor _contextAccessor;
 
         public ActiveRouteTagHelper(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
         }
-
-        private IDictionary<string, string> _routeValues;
-
-
-        [HtmlAttributeName("asp-page")]
-        public string Page { get; set; }
-
-        [HtmlAttributeName("asp-page-handler")]
-        public string Handler { get; set; }
-
-        /// <summary>Additional parameters for the route.</summary>
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues
-        {
-            get
-            {
-                if (this._routeValues == null)
-                    this._routeValues = (IDictionary<string, string>)new Dictionary<string, string>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
-                return this._routeValues;
-            }
-            set
-            {
-                this._routeValues = value;
-            }
-        }
-
-
-        [HtmlAttributeNotBound]
-        [ViewContext]
-        public ViewContext ViewContext { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -76,34 +30,25 @@ namespace CapitalBreweryBikeClub.Internal.TagHelpers
             output.Attributes.RemoveAll("is-active-route");
         }
 
-        private bool ShouldBeActive()
+        protected virtual string GetRequestPath()
         {
-
-            if (Page != null)
-            {
-                if (Page.ToLower() == "/index" && _contextAccessor.HttpContext.Request.Path.Value.ToLower() == "/")
-                {
-                    return true;
-                }
-                else if (!string.IsNullOrWhiteSpace(Page) && Page.ToLower() != _contextAccessor.HttpContext.Request.Path.Value.ToLower())
-                {
-                    return false;
-                }
-            }
-
-            foreach (KeyValuePair<string, string> routeValue in RouteValues)
-            {
-                if (!ViewContext.RouteData.Values.ContainsKey(routeValue.Key) ||
-                    ViewContext.RouteData.Values[routeValue.Key].ToString() != routeValue.Value)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return _contextAccessor.HttpContext.Request.Path.Value.TrimEnd('/');
         }
 
-        private void MakeActive(TagHelperOutput output)
+        private bool ShouldBeActive()
+        {
+            var page = Page;
+            if (page.EndsWith("/index", StringComparison.InvariantCultureIgnoreCase))
+            {
+                page = page.Substring(0, page.LastIndexOf("/index", StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            var requestPath = GetRequestPath();
+
+            return page.Equals(requestPath, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private static void MakeActive(TagHelperOutput output)
         {
             var classAttr = output.Attributes.FirstOrDefault(a => a.Name == "class");
             if (classAttr == null)
