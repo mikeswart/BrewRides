@@ -25,11 +25,12 @@ namespace CapitalBreweryBikeClub
         public IEnumerable<DailyRouteSchedule> Get(DateTime beginTime, TimeSpan timeSpan)
         {
             var endTime = beginTime.Add(timeSpan);
-            return schedules.Where(schedule => schedule.DateTime > beginTime && schedule.DateTime < endTime);
+            return schedules.OrderBy(schedule => schedule.DateTime).Where(schedule => schedule.DateTime >= beginTime && schedule.DateTime < endTime);
         }
 
-        public void Add(DailyRouteSchedule schedule)
+        public void AddOrReplace(DailyRouteSchedule schedule)
         {
+            schedules.RemoveAll(routeSchedule => routeSchedule.DateTime.Date == schedule.DateTime.Date);
             schedules.Add(schedule);
             fileCache.Save(schedules.Select(ScheduleData.FromDailyRouteSchedule));
         }

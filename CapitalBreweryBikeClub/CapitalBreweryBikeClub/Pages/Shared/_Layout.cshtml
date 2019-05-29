@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html class="h-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -19,27 +19,27 @@
     </environment>
     <link rel="stylesheet" href="~/css/site.css"/>
 </head>
-<body>
+<body class="d-flex flex-column h-100">
 <header>
-    <div class="menuHeader">
-        <a class="menuItem menuColor" is-active-route asp-page="/Index">
-            <i class="fa fa-calendar fa-3x"></i>
-            <span class="menuText">Schedule</span>
-        </a>
-        <a class="menuItem menuColor" is-active-route-folder asp-page="/Routes/Index">
-            <i class="far fa-map fa-3x"></i>
-            <span class="menuText">Routes</span>
-        </a>
-    </div>
+    <nav class="navbar-icon-top navbar-light">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" is-active-route asp-page="/Index">
+                    <i class="fa fa-calendar"></i>Schedule</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" is-active-route-folder asp-page="/Routes/Index">
+                    <i class="fa fa-map"></i>Routes</a>
+            </li>
+        </ul>
+    </nav>
 </header>
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
+<main role="main" class="pb-3 flex-shrink-0">
+    @RenderBody()
+</main>
 
-<footer class="border-top footer text-muted">
-    <div class="container">&copy; 2019 - BrewRi.de</div>
+<footer class="mt-auto border-top py-3 text-muted bg-light">
+    <div class="text-center font-italic">© 2019 - BrewRi.de</div>
 </footer>
 
 <environment include="Development">

@@ -1,9 +1,9 @@
 ﻿@model CapitalBreweryBikeClub.Model.WeeklySchedule
 
-<div class="routeContainer">
-    <header class="flexheader">
+<div class="weekly-schedule-container">
+    <div class="week-of-header">
         <h2>Week of @Model.BeginningOfWeek.ToString("MMMMM dd")</h2>
-    </header>
+    </div>
     @foreach (var scheduleItem in Model.Routes)
     {
         @await Component.InvokeAsync("ScheduleCard", scheduleItem)

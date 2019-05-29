@@ -52,12 +52,12 @@ namespace CapitalBreweryBikeClub.Pages.Admin
                 return Page();
             }
 
-            ScheduleProvider.Add(new DailyRouteSchedule(dateToAdd.Date, routeToAdd));
+            ScheduleProvider.AddOrReplace(new DailyRouteSchedule(dateToAdd.Date, routeToAdd));
 
             return RedirectToPage();
         }
 
-        private static IEnumerable<SelectListItem> DaysInWeek(DateTime startTime, params DayOfWeek[] daysOfWeek)
+        private IEnumerable<SelectListItem> DaysInWeek(DateTime startTime, params DayOfWeek[] daysOfWeek)
         {
             var currentDay = startTime.Date;
             SelectListGroup group = null;
@@ -71,8 +71,12 @@ namespace CapitalBreweryBikeClub.Pages.Admin
 
                 if (daysOfWeek.Contains(currentDay.DayOfWeek))
                 {
-                    yield return new SelectListItem(currentDay.ToString("dddd M-d"), currentDay.Date.ToString())
-                        {Group = group};
+                    var existingRoutes = string.Join(", ", ScheduleProvider.Get(currentDay, TimeSpan.FromDays(1)).Select(schedule => schedule.Route.Name));
+                    var scheduledRoutes = string.IsNullOrEmpty(existingRoutes) ? string.Empty : $" - ({existingRoutes})";
+                    yield return new SelectListItem($"{currentDay:dddd M-d}{scheduledRoutes}", currentDay.Date.ToString())
+                    {
+                        Group = group
+                    };
                 }
 
                 currentDay = currentDay.AddDays(1);

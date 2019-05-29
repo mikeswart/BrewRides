@@ -1,13 +1,13 @@
 ﻿@page
 @model CapitalBreweryBikeClub.Pages.Admin.IndexModel
 @{
+    ViewData["Title"] = "Admin";
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width"/>
     <title>Super Secret Admin Panel</title>
 </head>
 <body>
@@ -18,7 +18,7 @@
         <label>There are @Model.RouteProvider.Routes.Count() routes in the cache</label>
     </div>
     <form method="post" asp-page-handler="RefreshRoutes">
-        <button>Refresh Route Cache</button>
+        <button class="btn-danger">Refresh Route Cache</button>
     </form>
 </div>
 
@@ -28,8 +28,7 @@
 <form method="post" asp-page-handler="ScheduleRoute">
     <select asp-for="DateToAdd" asp-items="Model.SelectableDates"></select>
     <select asp-for="RouteToAdd" asp-items="Model.SelectableRoutes"></select>
-    <button>Add</button>
+    <button class="btn">Add</button>
 </form>
-
 </body>
 </html>
