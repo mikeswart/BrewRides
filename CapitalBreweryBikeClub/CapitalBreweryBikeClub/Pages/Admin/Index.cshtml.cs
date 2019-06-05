@@ -1,42 +1,76 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CapitalBreweryBikeClub.Data;
 using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CapitalBreweryBikeClub.Pages.Admin
 {
     public class IndexModel : PageModel
     {
-        public RouteProvider RouteProvider { get; }
-        public ScheduleProvider ScheduleProvider { get; }
-
-        [BindProperty] public string RouteToAdd { get; set; }
-
-        [BindProperty] public string DateToAdd { get; set; }
-
-        public IEnumerable<SelectListItem> SelectableRoutes { get; private set; }
-        public IEnumerable<SelectListItem> SelectableDates { get; private set; }
-
-        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider)
+        public IEnumerable<RouteInfo> Routes
         {
-            RouteProvider = routeProvider;
+            get;
+        }
+
+        public ScheduleProvider ScheduleProvider
+        {
+            get;
+        }
+
+        [BindProperty]
+        public string RouteToAdd
+        {
+            get;
+            set;
+        }
+
+        [BindProperty]
+        public string DateToAdd
+        {
+            get;
+            set;
+        }
+
+        public IEnumerable<SelectListItem> SelectableRoutes
+        {
+            get;
+            private set;
+        }
+
+        public IEnumerable<SelectListItem> SelectableDates
+        {
+            get;
+            private set;
+        }
+
+        private RouteProvider routeProvider;
+
+        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider, IServiceScopeFactory serviceScope)
+        {
+            this.routeProvider = routeProvider;
             ScheduleProvider = scheduleProvider;
+
+            using var _ = serviceScope.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
+
+            Routes = databaseContext.Routes.ToList();
         }
 
         public void OnGet()
         {
-            SelectableRoutes = RouteProvider.Routes.Select(info => new SelectListItem(info.Name, info.Name));
+            SelectableRoutes = Routes.Select(info => new SelectListItem(info.Name, info.Name));
             SelectableDates = DaysInWeek(DateTime.Today, DayOfWeek.Tuesday, DayOfWeek.Thursday).Take(20);
         }
 
         public void OnPostRefreshRoutes()
         {
-            RouteProvider.Refresh();
+            routeProvider.Refresh();
         }
 
         public async Task<IActionResult> OnPostScheduleRouteAsync()
@@ -46,7 +80,7 @@ namespace CapitalBreweryBikeClub.Pages.Admin
                 return Page();
             }
 
-            var routeToAdd = RouteProvider.Routes.FirstOrDefault(info => info.Name.Equals(RouteToAdd));
+            var routeToAdd = Routes.FirstOrDefault(info => info.Name.Equals(RouteToAdd));
             if (routeToAdd == null)
             {
                 return Page();

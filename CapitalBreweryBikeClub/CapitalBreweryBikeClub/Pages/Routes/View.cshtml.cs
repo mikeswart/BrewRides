@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Linq;
+using CapitalBreweryBikeClub.Data;
+using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CapitalBreweryBikeClub.Pages.Routes
 {
@@ -9,16 +13,18 @@ namespace CapitalBreweryBikeClub.Pages.Routes
     {
         public DailyRouteSchedule Route { get; private set; }
 
-        private readonly RouteProvider routeProvider;
+        private readonly IServiceScopeFactory scopeFactory;
 
-        public ViewModel(RouteProvider routeProvider)
+        public ViewModel(IServiceScopeFactory scopeFactory)
         {
-            this.routeProvider = routeProvider;
+            this.scopeFactory = scopeFactory;
         }
 
         public IActionResult OnGet(string routeName)
         {
-            var route = routeProvider.Get(routeName);
+            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
+            var route = databaseContext.Routes.FirstOrDefault(info => RouteInfo.GetWebFriendlyName(info.Name).Equals(routeName, StringComparison.InvariantCultureIgnoreCase));
+
             if (route == null)
             {
                 return NotFound();

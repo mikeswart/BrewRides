@@ -1,10 +1,8 @@
-using System.Threading.Tasks;
-using CapitalBreweryBikeClub.Pages;
+﻿using CapitalBreweryBikeClub.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +32,10 @@ namespace CapitalBreweryBikeClub
                     //options.Conventions.AddPageRoute("/Schedule", "");
                 })
                 .AddNewtonsoftJson();
+            services.AddDbContext<BrewRideDatabaseContext>(options =>
+            {
+                options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
+            });
             services.AddSingleton<RouteProvider>();
             services.AddSingleton<ScheduleProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

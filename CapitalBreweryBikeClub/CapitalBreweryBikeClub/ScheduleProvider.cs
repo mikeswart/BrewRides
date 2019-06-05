@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CapitalBreweryBikeClub.Data;
 using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CapitalBreweryBikeClub
 {
@@ -13,13 +15,17 @@ namespace CapitalBreweryBikeClub
         private readonly List<DailyRouteSchedule> schedules = new List<DailyRouteSchedule>();
         private readonly LocalJsonFile<ScheduleData> fileCache;
 
-        public ScheduleProvider(IWebHostEnvironment webHostEnvironment, RouteProvider routeProvider)
+        public ScheduleProvider(IWebHostEnvironment webHostEnvironment, RouteProvider routeProvider, IServiceScopeFactory scopeFactory)
         {
             fileCache = new LocalJsonFile<ScheduleData>(webHostEnvironment.ContentRootFileProvider, "schedule.json");
-            if (fileCache.CacheExists())
+            if (!fileCache.CacheExists())
             {
-                schedules = fileCache.Load().Result?.Select(scheduleData => scheduleData.ToDailyRouteSchedule(routeProvider)).ToList() ?? new List<DailyRouteSchedule>();
+                return;
             }
+
+            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
+            schedules = fileCache.Load().Result?.Select(scheduleData => scheduleData.ToDailyRouteSchedule(databaseContext)).ToList() ?? new List<DailyRouteSchedule>();
+            // TODO: This is out of sync
         }
 
         public IEnumerable<DailyRouteSchedule> Get(DateTime beginTime, TimeSpan timeSpan)
@@ -41,9 +47,9 @@ namespace CapitalBreweryBikeClub
             public DateTime Date { get; set; }
             public string RouteName { get; set; }
 
-            public DailyRouteSchedule ToDailyRouteSchedule(RouteProvider routeProvider)
+            public DailyRouteSchedule ToDailyRouteSchedule(BrewRideDatabaseContext context)
             {
-                return new DailyRouteSchedule(Date, routeProvider.Get(RouteName));
+                return new DailyRouteSchedule(Date, context.Routes.FirstOrDefault(info => info.Name == RouteName));
             }
 
             public static ScheduleData FromDailyRouteSchedule(DailyRouteSchedule source)

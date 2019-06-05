@@ -10,6 +10,11 @@
 
         public RideWithGpsLinks(RouteInfo route)
         {
+            if(route == null)
+            {
+                return;
+            }
+
             EmbedLink = $"https://ridewithgps.com/routes/{route.RideWithGpsId}/embed";
             FitLink = $"https://ridewithgps.com/routes/{route.RideWithGpsId}.fit";
             CueLink = $"https://ridewithgps.com/routes/{route.RideWithGpsId}/cue_sheet.html";

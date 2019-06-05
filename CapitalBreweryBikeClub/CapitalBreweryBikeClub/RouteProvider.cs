@@ -1,56 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CapitalBreweryBikeClub.Internal;
+using CapitalBreweryBikeClub.Data;
 using CapitalBreweryBikeClub.Model;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 
 namespace CapitalBreweryBikeClub
 {
     public class RouteProvider
     {
-        private Dictionary<string, RouteInfo> allRoutes;
+        private readonly IConfiguration configuration;
+        private readonly IServiceScopeFactory scopeFactory;
 
-        public IEnumerable<RouteInfo> Routes => allRoutes.Values;
-
-        private readonly Action<bool> refreshAction;
-
-        public RouteProvider(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        public RouteProvider(IConfiguration configuration, IServiceScopeFactory scopeFactory)
         {
-            var fileCache = new LocalJsonFile<RouteInfo>(webHostEnvironment.ContentRootFileProvider, "routes.json");
-
-            refreshAction = (force) =>
-            {
-                IEnumerable<RouteInfo> routes = null;
-                if (fileCache.CacheExists())
-                {
-                    routes = fileCache.Load().Result;
-                }
-
-                if (force || routes == null)
-                {
-                    routes = new RouteWebProvider(configuration).GetRoutesFromWeb().Result;
-                    fileCache.Save(routes);
-                }
-
-                allRoutes = routes.ToDictionary(info => RouteInfo.GetWebFriendlyName(info.Name));
-            };
-
-            refreshAction(false);
-        }
-
-        public RouteInfo Get(string routeName)
-        {
-            return allRoutes.TryGetValue(RouteInfo.GetWebFriendlyName(routeName), out var routeInfo) ? routeInfo : null;
+            this.configuration = configuration;
+            this.scopeFactory = scopeFactory;
         }
 
         public void Refresh()
         {
-            refreshAction(true);
+            using var scope = scopeFactory.CreateScope();
+            using var dbContext = scope.ServiceProvider.GetService<BrewRideDatabaseContext>();
+
+            var routes = new RouteWebProvider(configuration).GetRoutesFromWeb().Result;
+            dbContext.Routes.Clear();
+            dbContext.Routes.AddRange(routes.ToList());
+
+            dbContext.SaveChanges();
         }
 
         private sealed class RouteWebProvider
@@ -80,6 +61,14 @@ namespace CapitalBreweryBikeClub
                     return new RouteInfo((string)token[0], (string)token[1], (string)token[2], (string)token[3], (string)token[4], true);
                 }
             }
+        }
+    }
+
+    public static class EntityExtensions
+    {
+        public static void Clear<T>(this DbSet<T> dbSet) where T : class
+        {
+            dbSet.RemoveRange(dbSet);
         }
     }
 }

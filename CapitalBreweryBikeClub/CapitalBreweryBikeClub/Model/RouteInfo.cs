@@ -1,18 +1,21 @@
-﻿namespace CapitalBreweryBikeClub.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CapitalBreweryBikeClub.Model
 {
     public sealed class RouteInfo
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public string RideWithGpsId { get; }
+        [Key]
+        public string RideWithGpsId { get; set; }
 
-        public bool Available { get; }
+        public bool Available { get; set; }
 
-        public string Link { get; }
+        public string Link { get; set; }
 
-        public string Mileage { get; }
+        public string Mileage { get; set; }
 
-        public string Info { get; }
+        public string Info { get; set; }
 
         public RouteInfo(string name, string link, string mileage, string info, string rideWithGpsId, bool available)
         {
@@ -22,6 +25,10 @@
             Link = link;
             Mileage = mileage;
             Info = info;
+        }
+
+        public RouteInfo()
+        {
         }
 
         public static string GetWebFriendlyName(string name)
