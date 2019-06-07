@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CapitalBreweryBikeClub.Data;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -14,16 +13,16 @@ namespace CapitalBreweryBikeClub.Pages.Routes
             private set;
         }
 
-        private readonly BrewRideDatabaseContext dbContext;
+        private readonly RouteProvider routeProvider;
 
-        public IndexModel(BrewRideDatabaseContext dbContext)
+        public IndexModel(RouteProvider routeProvider)
         {
-            this.dbContext = dbContext;
+            this.routeProvider = routeProvider;
         }
 
         public void OnGet()
         {
-            Routes = dbContext.Routes.ToList().Select(info => (info, RouteInfo.GetWebFriendlyName(info.Name)));
+            Routes = routeProvider.Routes.Values.Select(info => (info, RouteInfo.GetWebFriendlyName(info.Name)));
         }
     }
 }

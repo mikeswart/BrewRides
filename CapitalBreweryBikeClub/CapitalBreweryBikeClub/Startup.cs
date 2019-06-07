@@ -1,7 +1,13 @@
-﻿using CapitalBreweryBikeClub.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using CapitalBreweryBikeClub.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,15 +33,36 @@ namespace CapitalBreweryBikeClub
                 options.CheckConsentNeeded = context => true;
             });
 
-            services.AddRazorPages(options =>
-                {
-                    //options.Conventions.AddPageRoute("/Schedule", "");
-                })
-                .AddNewtonsoftJson();
+
             services.AddDbContext<BrewRideDatabaseContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
             });
+
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddEntityFrameworkStores<BrewRideDatabaseContext>();
+            //.AddDefaultTokenProviders();
+
+            services.AddRazorPages()
+                .AddNewtonsoftJson();
+
+            //services.AddAuthentication().AddGoogle(o =>
+            //{
+            //    // Configure your auth keys, usually stored in Config or User Secrets
+            //    o.ClientId = "450721080679-9ff31jgqgge83op0biqdiq01eqc0hhb7.apps.googleusercontent.com";
+            //    o.ClientSecret = "0b9MjZvBOdxSzMzZ4hs22pEc";
+            //    o.Scope.Add("https://www.googleapis.com/auth/plus.login");
+            //    o.ClaimActions.MapJsonKey(ClaimTypes.Gender, "gender");
+            //    o.SaveTokens = true;
+            //    o.Events.OnCreatingTicket = ctx =>
+            //    {
+            //        var tokens = (List<AuthenticationToken>) ctx.Properties.GetTokens();
+            //        tokens.Add(new AuthenticationToken {Name = "TicketCreated", Value = DateTime.UtcNow.ToString()});
+            //        ctx.Properties.StoreTokens(tokens);
+            //        return Task.CompletedTask;
+            //    };
+            //});
+
             services.AddSingleton<RouteProvider>();
             services.AddSingleton<ScheduleProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -62,6 +89,7 @@ namespace CapitalBreweryBikeClub
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

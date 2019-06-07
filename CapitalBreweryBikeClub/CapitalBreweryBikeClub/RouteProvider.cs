@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CapitalBreweryBikeClub.Data;
+using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,22 +18,37 @@ namespace CapitalBreweryBikeClub
         private readonly IConfiguration configuration;
         private readonly IServiceScopeFactory scopeFactory;
 
+        public IImmutableDictionary<string, RouteInfo> Routes
+        {
+            get;
+            private set;
+        }
+
         public RouteProvider(IConfiguration configuration, IServiceScopeFactory scopeFactory)
         {
             this.configuration = configuration;
             this.scopeFactory = scopeFactory;
+
+            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext dbContext);
+            ReloadRoutesFromDatabase(dbContext);
         }
 
         public void Refresh()
         {
-            using var scope = scopeFactory.CreateScope();
-            using var dbContext = scope.ServiceProvider.GetService<BrewRideDatabaseContext>();
+            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext dbContext);
 
             var routes = new RouteWebProvider(configuration).GetRoutesFromWeb().Result;
             dbContext.Routes.Clear();
-            dbContext.Routes.AddRange(routes.ToList());
-
+            dbContext.Routes.AddRange(routes.Select(info => info.GetRouteData()).ToList());
             dbContext.SaveChanges();
+
+            ReloadRoutesFromDatabase(dbContext);
+        }
+
+        private void ReloadRoutesFromDatabase(BrewRideDatabaseContext dbContext)
+        {
+            Routes = dbContext.Routes.Select(routeData => new RouteInfo(routeData))
+                .ToImmutableDictionary(info => RouteInfo.GetWebFriendlyName(info.Name));
         }
 
         private sealed class RouteWebProvider

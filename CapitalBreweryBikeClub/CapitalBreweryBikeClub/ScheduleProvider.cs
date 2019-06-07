@@ -15,7 +15,7 @@ namespace CapitalBreweryBikeClub
         private readonly List<DailyRouteSchedule> schedules = new List<DailyRouteSchedule>();
         private readonly LocalJsonFile<ScheduleData> fileCache;
 
-        public ScheduleProvider(IWebHostEnvironment webHostEnvironment, RouteProvider routeProvider, IServiceScopeFactory scopeFactory)
+        public ScheduleProvider(IWebHostEnvironment webHostEnvironment, RouteProvider routeProvider)
         {
             fileCache = new LocalJsonFile<ScheduleData>(webHostEnvironment.ContentRootFileProvider, "schedule.json");
             if (!fileCache.CacheExists())
@@ -23,9 +23,7 @@ namespace CapitalBreweryBikeClub
                 return;
             }
 
-            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
-            schedules = fileCache.Load().Result?.Select(scheduleData => scheduleData.ToDailyRouteSchedule(databaseContext)).ToList() ?? new List<DailyRouteSchedule>();
-            // TODO: This is out of sync
+            schedules = fileCache.Load().Result?.Select(scheduleData => scheduleData.ToDailyRouteSchedule(routeProvider)).ToList() ?? new List<DailyRouteSchedule>();
         }
 
         public IEnumerable<DailyRouteSchedule> Get(DateTime beginTime, TimeSpan timeSpan)
@@ -47,9 +45,10 @@ namespace CapitalBreweryBikeClub
             public DateTime Date { get; set; }
             public string RouteName { get; set; }
 
-            public DailyRouteSchedule ToDailyRouteSchedule(BrewRideDatabaseContext context)
+            public DailyRouteSchedule ToDailyRouteSchedule(RouteProvider routeProvider)
             {
-                return new DailyRouteSchedule(Date, context.Routes.FirstOrDefault(info => info.Name == RouteName));
+                routeProvider.Routes.TryGetValue(RouteName, out var routeInfo);
+                return new DailyRouteSchedule(Date, routeInfo);
             }
 
             public static ScheduleData FromDailyRouteSchedule(DailyRouteSchedule source)

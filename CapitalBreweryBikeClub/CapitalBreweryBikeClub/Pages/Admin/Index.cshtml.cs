@@ -52,14 +52,12 @@ namespace CapitalBreweryBikeClub.Pages.Admin
 
         private RouteProvider routeProvider;
 
-        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider, IServiceScopeFactory serviceScope)
+        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider)
         {
             this.routeProvider = routeProvider;
             ScheduleProvider = scheduleProvider;
 
-            using var _ = serviceScope.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
-
-            Routes = databaseContext.Routes.ToList();
+            Routes = routeProvider.Routes.Values;
         }
 
         public void OnGet()

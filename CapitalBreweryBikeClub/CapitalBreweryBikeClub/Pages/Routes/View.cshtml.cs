@@ -22,15 +22,15 @@ namespace CapitalBreweryBikeClub.Pages.Routes
 
         public IActionResult OnGet(string routeName)
         {
-            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
-            var route = databaseContext.Routes.FirstOrDefault(info => RouteInfo.GetWebFriendlyName(info.Name).Equals(routeName, StringComparison.InvariantCultureIgnoreCase));
+            //using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
+            //var route = databaseContext.Routes.FirstOrDefault(info => RouteInfo.GetWebFriendlyName(info.Name).Equals(routeName, StringComparison.InvariantCultureIgnoreCase));
 
-            if (route == null)
-            {
-                return NotFound();
-            }
+            //if (route == null)
+            //{
+            //    return NotFound();
+            //}
 
-            Route = new DailyRouteSchedule(DateTime.MinValue, route);
+            //Route = new DailyRouteSchedule(DateTime.MinValue, route);
             return Page();
         }
     }

@@ -15,7 +15,7 @@
 <body>
     @foreach (var route in @Model.Routes)
     {
-        <h2><a href="/Routes/@route.link">@route.info.Name</a> (@route.info.Mileage)</h2>
+        <h2><a href="/Routes/@route.link">@route.info.Name</a> (@route.info.Mileage) - @route.info.GetHashCode()</h2>
     }
 </body>
 </html>
