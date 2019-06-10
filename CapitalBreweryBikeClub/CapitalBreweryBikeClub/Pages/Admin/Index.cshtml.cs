@@ -89,6 +89,11 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             return RedirectToPage();
         }
 
+        public async Task<IActionResult> OnPostInitializeDatabase()
+        {
+            throw new NotImplementedException();
+        }
+
         private IEnumerable<SelectListItem> DaysInWeek(DateTime startTime, params DayOfWeek[] daysOfWeek)
         {
             var currentDay = startTime.Date;

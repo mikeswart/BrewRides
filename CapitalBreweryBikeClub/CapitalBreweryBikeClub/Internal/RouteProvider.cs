@@ -4,14 +4,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CapitalBreweryBikeClub.Data;
-using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 
-namespace CapitalBreweryBikeClub
+namespace CapitalBreweryBikeClub.Internal
 {
     public class RouteProvider
     {
@@ -78,14 +76,6 @@ namespace CapitalBreweryBikeClub
                     return new RouteInfo((string)token[0], (string)token[1], (string)token[2], (string)token[3], (string)token[4], true);
                 }
             }
-        }
-    }
-
-    public static class EntityExtensions
-    {
-        public static void Clear<T>(this DbSet<T> dbSet) where T : class
-        {
-            dbSet.RemoveRange(dbSet);
         }
     }
 }

@@ -1,0 +1,25 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@model CapitalBreweryBikeClub.Pages.Account.Manage.IndexModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<h2>Account page for @Model.UserName</h2>
+<form asp-page-handler="Logout" method="post">
+    <button class="btn btn-danger" type="submit">Log Out</button>
+</form>
+
+<form asp-page-handler="Delete" method="post">
+    <button class="btn btn-danger" type="submit">Delete Account</button>
+</form>
+</body>
+</html>

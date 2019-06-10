@@ -12,23 +12,28 @@
 </head>
 <body>
 
-<h2>Route Management</h2>
-<div>
+    <h2>Route Management</h2>
     <div>
-        <label>There are @Model.Routes.Count() routes in the cache</label>
+        <div>
+            <label>There are @Model.Routes.Count() routes in the cache</label>
+        </div>
+        <form method="post" asp-page-handler="RefreshRoutes">
+            <button class="btn-danger">Refresh Route Cache</button>
+        </form>
     </div>
-    <form method="post" asp-page-handler="RefreshRoutes">
-        <button class="btn-danger">Refresh Route Cache</button>
+
+    <h2>Schedule Management</h2>
+
+    <h3>Schedule a Ride</h3>
+    <form method="post" asp-page-handler="ScheduleRoute">
+        <select asp-for="DateToAdd" asp-items="Model.SelectableDates"></select>
+        <select asp-for="RouteToAdd" asp-items="Model.SelectableRoutes"></select>
+        <button class="btn">Add</button>
     </form>
-</div>
 
-<h2>Schedule Management</h2>
-
-<h3>Schedule a Ride</h3>
-<form method="post" asp-page-handler="ScheduleRoute">
-    <select asp-for="DateToAdd" asp-items="Model.SelectableDates"></select>
-    <select asp-for="RouteToAdd" asp-items="Model.SelectableRoutes"></select>
-    <button class="btn">Add</button>
-</form>
+    <h3>User Management</h3>
+    <form method="post" asp-page-handler="InitializeDatabase">
+        <button class="btn">Initialize Database</button>
+    </form>
 </body>
 </html>

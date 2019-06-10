@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using CapitalBreweryBikeClub.Data;
-using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace CapitalBreweryBikeClub
+namespace CapitalBreweryBikeClub.Internal
 {
     public sealed class ScheduleProvider
     {
