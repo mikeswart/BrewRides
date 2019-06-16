@@ -24,10 +24,9 @@
 }
 else
 {
-    <ul>
-        <li><a asp-page="/Account/Login" class="btn btn-info" role="button">Sign In</a></li>
-        <li><a asp-page="/Account/Register" class="btn btn-info" role="button">Register</a></li>
-    </ul>
+    <div>
+        <a asp-page="/Account/ExternalLogin" class="btn btn-primary btn-lg" role="button"><i class="fab fa-google btn-label"></i> Sign In</a>
+    </div>
 }
 @await Component.InvokeAsync("Schedule", DateTime.Today)
 

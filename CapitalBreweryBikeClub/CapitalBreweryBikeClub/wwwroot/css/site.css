@@ -70,6 +70,12 @@ nav {
     justify-content: center;
 }
 
+.btn-label {
+    position: relative;
+    display: inline-block;
+    padding: 6px 6px 6px 3px;
+}
+
 @media only screen and (max-width: 450px) {
     .card-body > iframe { width: 300px; }
 }
