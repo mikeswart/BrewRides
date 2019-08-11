@@ -27,23 +27,25 @@ namespace CapitalBreweryBikeClub.Internal
             this.configuration = configuration;
             this.scopeFactory = scopeFactory;
 
-            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext dbContext);
+            using var _ = scopeFactory.CreateDatabaseContextScope(out RouteDatabaseContext dbContext);
             ReloadRoutesFromDatabase(dbContext);
         }
 
         public void Refresh()
         {
-            using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext dbContext);
+            using var _ = scopeFactory.CreateDatabaseContextScope(out RouteDatabaseContext dbContext);
 
             var routes = new RouteWebProvider(configuration).GetRoutesFromWeb().Result;
             dbContext.Routes.Clear();
+
+            // When there are duplicate entries in the data source, this will throw an exception.
             dbContext.Routes.AddRange(routes.Select(info => info.GetRouteData()).ToList());
             dbContext.SaveChanges();
 
             ReloadRoutesFromDatabase(dbContext);
         }
 
-        private void ReloadRoutesFromDatabase(BrewRideDatabaseContext dbContext)
+        private void ReloadRoutesFromDatabase(RouteDatabaseContext dbContext)
         {
             Routes = dbContext.Routes.Select(routeData => new RouteInfo(routeData))
                 .ToImmutableDictionary(info => RouteInfo.GetWebFriendlyName(info.Name));

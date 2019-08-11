@@ -4,13 +4,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapitalBreweryBikeClub.Data
 {
-    public class BrewRideDatabaseContext : IdentityDbContext
+    public class BrewRideUserDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<RouteData> Routes { get; set; }
-
-        public BrewRideDatabaseContext(DbContextOptions<BrewRideDatabaseContext> options)
+        public BrewRideUserDbContext(DbContextOptions<BrewRideUserDbContext> options)
             : base(options)
         {
         }
+    }
+
+    public class RouteDatabaseContext : DbContext
+    {
+        public DbSet<RouteData> Routes { get; set; }
+
+        public RouteDatabaseContext(DbContextOptions<RouteDatabaseContext> options)
+            : base(options)
+            {
+            }
     }
 }

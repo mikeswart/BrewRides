@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace CapitalBreweryBikeClub
 {
@@ -35,34 +36,39 @@ namespace CapitalBreweryBikeClub
             });
 
 
-            services.AddDbContext<BrewRideDatabaseContext>(options =>
+            services.AddDbContext<BrewRideUserDbContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
             });
 
+            services.AddDbContext<RouteDatabaseContext>(options => {
+                options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
+            });
+
             services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<BrewRideDatabaseContext>()
+                .AddEntityFrameworkStores<BrewRideUserDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddRazorPages()
                 .AddNewtonsoftJson();
 
-            services.AddAuthentication().AddGoogle(o =>
-            {
-                // Configure your auth keys, usually stored in Config or User Secrets
-                o.ClientId = "450721080679-auk4f14ro299n1u5gcd45h7o3rcil26d.apps.googleusercontent.com";
-                o.ClientSecret = "bHujuAsIqajBxL30s1bHgW1-";
-                o.Scope.Add("https://www.googleapis.com/auth/plus.login");
-                o.ClaimActions.MapJsonKey(ClaimTypes.Gender, "gender");
-                o.SaveTokens = true;
-                o.Events.OnCreatingTicket = ctx =>
-                {
-                    var tokens = (List<AuthenticationToken>)ctx.Properties.GetTokens();
-                    tokens.Add(new AuthenticationToken {Name = "TicketCreated", Value = DateTime.UtcNow.ToString()});
-                    ctx.Properties.StoreTokens(tokens);
-                    return Task.CompletedTask;
-                };
-            });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            // services.AddAuthentication().AddGoogle(o =>
+            // {
+            //     // Configure your auth keys, usually stored in Config or User Secrets
+            //     o.ClientId = "450721080679-auk4f14ro299n1u5gcd45h7o3rcil26d.apps.googleusercontent.com";
+            //     o.ClientSecret = "bHujuAsIqajBxL30s1bHgW1-";
+            //     o.Scope.Add("https://www.googleapis.com/auth/plus.login");
+            //     o.ClaimActions.MapJsonKey(ClaimTypes.Gender, "gender");
+            //     o.SaveTokens = true;
+            //     o.Events.OnCreatingTicket = ctx =>
+            //     {
+            //         var tokens = (List<AuthenticationToken>)ctx.Properties.GetTokens();
+            //         tokens.Add(new AuthenticationToken {Name = "TicketCreated", Value = DateTime.UtcNow.ToString()});
+            //         ctx.Properties.StoreTokens(tokens);
+            //         return Task.CompletedTask;
+            //     };
+            // });
 
             services.ConfigureApplicationCookie(options =>
             {
