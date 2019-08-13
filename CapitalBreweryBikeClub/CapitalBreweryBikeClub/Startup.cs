@@ -29,11 +29,11 @@ namespace CapitalBreweryBikeClub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-            });
+            // services.Configure<CookiePolicyOptions>(options =>
+            // {
+            //     // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //     options.CheckConsentNeeded = context => true;
+            // });
 
 
             services.AddDbContext<BrewRideUserDbContext>(options =>
@@ -45,14 +45,16 @@ namespace CapitalBreweryBikeClub
                 options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
             });
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<BrewRideUserDbContext>()
-                .AddDefaultTokenProviders();
+            // services.AddIdentity<IdentityUser, IdentityRole>()
+            //     .AddEntityFrameworkStores<BrewRideUserDbContext>()
+            //     .AddDefaultTokenProviders();
 
             services.AddRazorPages()
                 .AddNewtonsoftJson();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => options.LoginPath = "/account/CustomLogin");
+
             // services.AddAuthentication().AddGoogle(o =>
             // {
             //     // Configure your auth keys, usually stored in Config or User Secrets
@@ -70,13 +72,13 @@ namespace CapitalBreweryBikeClub
             //     };
             // });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Account/ExternalLogin";
-                options.ReturnUrlParameter = "test";
-                options.LogoutPath = "/Account/Logout";
-                options.AccessDeniedPath = "/Account/ExternalLogin";
-            });
+            // services.ConfigureApplicationCookie(options =>
+            // {
+            //     options.LoginPath = "/Account/ExternalLogin";
+            //     options.ReturnUrlParameter = "test";
+            //     options.LogoutPath = "/Account/Logout";
+            //     options.AccessDeniedPath = "/Account/ExternalLogin";
+            // });
 
             services.AddSingleton<RouteProvider>();
             services.AddSingleton<ScheduleProvider>();
@@ -100,7 +102,7 @@ namespace CapitalBreweryBikeClub
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseCookiePolicy();
+            // app.UseCookiePolicy();
 
             app.UseRouting();
 

@@ -1,14 +1,12 @@
 ﻿@page
 @using Microsoft.AspNetCore.Identity
 @model CapitalBreweryBikeClub.Pages.IndexModel
-@inject SignInManager<IdentityUser> SignInManager
-
 @{
     Layout = "Shared/_Layout";
     ViewData["Title"] = "Brew Rides";
 }
 
-@if (SignInManager.IsSignedIn(User))
+@if (User.Identity.IsAuthenticated)
 {
     <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
         <ul>
@@ -25,7 +23,8 @@
 else
 {
     <div>
-        <a asp-page="/Account/ExternalLogin" class="btn btn-primary btn-lg" role="button"><i class="fab fa-google btn-label"></i> Sign In</a>
+        <a asp-page="/Account/ExternalLogin" class="btn btn-primary btn-lg" role="button"><i class="fab fa-google btn-label"></i> External Sign In</a>
+        <a asp-page="/Account/CustomLogin" class="btn btn-primary btn-lg" role="button"><i class="fas fa-user-ninja btn-label"></i> Custom Sign In</a>
     </div>
 }
 @await Component.InvokeAsync("Schedule", DateTime.Today)
