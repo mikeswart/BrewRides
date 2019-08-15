@@ -3,14 +3,16 @@ using CapitalBreweryBikeClub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CapitalBreweryBikeClub.Migrations.RouteDatabase
 {
     [DbContext(typeof(RouteDatabaseContext))]
-    partial class RouteDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20190815030016_Members")]
+    partial class Members
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
