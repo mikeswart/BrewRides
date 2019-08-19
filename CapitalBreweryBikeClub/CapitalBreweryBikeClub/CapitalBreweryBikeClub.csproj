@@ -23,4 +23,8 @@
       <PackageReference Include="System.Reactive.Core" Version="4.1.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers" />
+  </ItemGroup>
+
 </Project>
