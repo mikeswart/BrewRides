@@ -11,7 +11,11 @@ namespace CapitalBreweryBikeClub.Pages
     {
         public void OnGet()
         {
+        }
 
+        public IActionResult OnPostLogout()
+        {
+            return RedirectToPage("/Account/Signout");
         }
     }
 }
