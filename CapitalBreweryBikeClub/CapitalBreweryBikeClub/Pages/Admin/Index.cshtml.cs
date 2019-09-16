@@ -8,7 +8,6 @@ using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CapitalBreweryBikeClub.Pages.Admin
 {
@@ -38,6 +37,20 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             set;
         }
 
+        [BindProperty]
+        public Note CurrentNote
+        {
+            get;
+            set;
+        }
+
+        [BindProperty]
+        public string NoteText
+        {
+            get;
+            set;
+        }
+
         public IEnumerable<SelectListItem> SelectableRoutes
         {
             get;
@@ -50,13 +63,16 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             private set;
         }
 
-        private RouteProvider routeProvider;
+        private readonly RouteProvider routeProvider;
+        private readonly RouteDatabaseContext dbContext;
+        private readonly NotesService notesService;
 
-        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider)
+        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider, RouteDatabaseContext dbContext, NotesService notesService)
         {
             this.routeProvider = routeProvider;
             ScheduleProvider = scheduleProvider;
-
+            this.dbContext = dbContext;
+            this.notesService = notesService;
             Routes = routeProvider.Routes.Values;
         }
 
@@ -64,6 +80,18 @@ namespace CapitalBreweryBikeClub.Pages.Admin
         {
             SelectableRoutes = Routes.Select(info => new SelectListItem(info.Name, info.Name));
             SelectableDates = DaysInWeek(DateTime.Today, DayOfWeek.Tuesday, DayOfWeek.Thursday).Take(20);
+            CurrentNote = notesService.CurrentNote;
+            NoteText = CurrentNote?.Text ?? string.Empty;
+        }
+
+        public void OnPostClearNote()
+        {
+            notesService.ClearCurrentNote();
+        }
+
+        public void OnPostUpdateNote()
+        {
+            notesService.AddNote(new Note() { Text = NoteText, Created = DateTime.Now, CreatedBy = dbContext.Members.FirstOrDefault() });
         }
 
         public void OnPostRefreshRoutes()
@@ -87,11 +115,6 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             ScheduleProvider.AddOrReplace(new DailyRouteSchedule(dateToAdd.Date, routeToAdd));
 
             return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostInitializeDatabase()
-        {
-            throw new NotImplementedException();
         }
 
         private IEnumerable<SelectListItem> DaysInWeek(DateTime startTime, params DayOfWeek[] daysOfWeek)

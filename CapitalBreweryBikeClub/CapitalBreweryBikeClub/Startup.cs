@@ -32,10 +32,6 @@ namespace CapitalBreweryBikeClub
                 options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
             });
 
-            // services.AddIdentity<IdentityUser, IdentityRole>()
-            //     .AddEntityFrameworkStores<BrewRideUserDbContext>()
-            //     .AddDefaultTokenProviders();
-
             services.AddRazorPages()
                 .AddNewtonsoftJson();
 
@@ -45,6 +41,8 @@ namespace CapitalBreweryBikeClub
             services.AddSingleton<RouteProvider>();
             services.AddSingleton<ScheduleProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<SiteState>();
+            services.AddSingleton<NotesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

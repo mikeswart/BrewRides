@@ -12,6 +12,19 @@
 </head>
 <body>
 
+    <h2>Post a Note</h2>
+    <div>
+        <form method="post" asp-page-handler="UpdateNote">
+            <textarea class="form-control" asp-for="NoteText" id="currentNote" rows="3"></textarea>
+            @if(Model.CurrentNote != null)
+            {
+                <div>Created by: @Model.CurrentNote.CreatedBy on @Model.CurrentNote.Created</div>
+                <button class="btn" asp-page-handler="ClearNote">Clear</button>
+            }
+            <button class="btn" asp-page-handler="UpdateNote">Update Note</button>
+        </form>
+    </div>
+
     <h2>Route Management</h2>
     <div>
         <div>

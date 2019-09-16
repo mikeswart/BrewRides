@@ -8,7 +8,8 @@ namespace CapitalBreweryBikeClub.Data
 {
     public class RouteDatabaseContext : DbContext
     {
-        
+        public DbSet<Note> Notes { get; set; }
+
         public DbSet<RouteData> Routes { get; set; }
 
         public DbSet<MemberInformation> Members { get; set; }
