@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using CapitalBreweryBikeClub.Model;
@@ -8,11 +7,25 @@ namespace CapitalBreweryBikeClub.Data
 {
     public class RouteDatabaseContext : DbContext
     {
-        public DbSet<Note> Notes { get; set; }
+        public DbSet<Note> Notes
+        {
+            get; set;
+        }
 
-        public DbSet<RouteData> Routes { get; set; }
+        public DbSet<RouteData> Routes
+        {
+            get; set;
+        }
 
-        public DbSet<MemberInformation> Members { get; set; }
+        public DbSet<MemberInformation> Members
+        {
+            get; set;
+        }
+
+        public DbSet<SiteState> SiteState
+        {
+            get; set;
+        }
 
         public RouteDatabaseContext(DbContextOptions<RouteDatabaseContext> options)
             : base(options)
@@ -28,6 +41,8 @@ namespace CapitalBreweryBikeClub.Data
                         .Where(line => !string.IsNullOrWhiteSpace(line))
                         .Select(line => new MemberInformation { Email = line }));
             }
+
+            modelBuilder.Entity<SiteState>().HasData(new SiteState() { Id = 1 });
         }
 
         private static class SeedFileNames

@@ -23,13 +23,9 @@ namespace CapitalBreweryBikeClub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BrewRideUserDbContext>(options =>
-            {
-                options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
-            });
-
             services.AddDbContext<RouteDatabaseContext>(options => {
-                options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
+                options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"])
+                .UseLazyLoadingProxies();
             });
 
             services.AddRazorPages()
@@ -41,8 +37,6 @@ namespace CapitalBreweryBikeClub
             services.AddSingleton<RouteProvider>();
             services.AddSingleton<ScheduleProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<SiteState>();
-            services.AddSingleton<NotesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,5 @@
 ﻿@page
-@using Microsoft.AspNetCore.Identity
 @model CapitalBreweryBikeClub.Pages.IndexModel
-@inject CapitalBreweryBikeClub.Internal.NotesService NotesService
 @{
     Layout = "Shared/_Layout";
     ViewData["Title"] = "Brew Rides";
@@ -9,31 +7,34 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
-        <ul>
-            <li>
-                <h1>@User.Identity.Name Is Signed In</h1>
-            </li>
-            <li>
-                <button type="submit" asp-page-handler="Logout" class="btn btn-link">Log out</button>
-            </li>
-        </ul>
-    </form>
-
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary" asp-page="/Account/Manage/Index" >@User.Identity.Name</button>
+        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" asp-page="/Admin/Index">Admin Console</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" asp-page="/Account/SignOut">Sign Out</a>
+        </div>
+    </div>
 }
 else
 {
     <div>
-        <!-- <a asp-page="/Account/ExternalLogin" class="btn btn-primary btn-lg" role="button"><i class="fab fa-google btn-label"></i> External Sign In</a> -->
         <a asp-page="/Account/CustomLogin" class="btn btn-primary btn-lg" role="button"><i class="fas fa-user-ninja btn-label"></i> Custom Sign In</a>
     </div>
 }
-@if(NotesService.CurrentNote != null)
+
+@if(Model.SiteState.Note != null)
 {
-    <div>
-        <h3>Note:</h3>
-        <div>@NotesService.CurrentNote.Text</div>
+<div class="container h-100">
+  <div class="row h-100 justify-content-center align-items-center">
+    <div class="alert alert-auto alert-info" role="alert">
+        @Model.SiteState.Note.Text
     </div>
+  </div>
+</div>
 }
 
 @await Component.InvokeAsync("Schedule", DateTime.Today)

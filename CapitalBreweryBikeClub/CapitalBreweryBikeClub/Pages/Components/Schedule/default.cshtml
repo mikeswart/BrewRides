@@ -4,6 +4,12 @@
     <div class="week-of-header">
         <h2>Week of @Model.BeginningOfWeek.ToString("MMMMM dd")</h2>
     </div>
+    @if(!Model.Routes.Any())
+    {
+        <div>
+            <i>Nothing planned for this week!</i>
+        </div>
+    }
     @foreach (var scheduleItem in Model.Routes)
     {
         @await Component.InvokeAsync("ScheduleCard", scheduleItem)

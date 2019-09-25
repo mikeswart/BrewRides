@@ -17,7 +17,7 @@ namespace CapitalBreweryBikeClub.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(DateTime dateTime)
         {
-            var beginningOfWeek = DateTimeHelper.GetBeginningOfWeek(DateTime.Now);
+            var beginningOfWeek = DateTimeHelper.GetBeginningOfWeek(dateTime);
             return View(
                 new WeeklySchedule(
                     beginningOfWeek,

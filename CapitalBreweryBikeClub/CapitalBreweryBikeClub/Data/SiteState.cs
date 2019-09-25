@@ -2,12 +2,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CapitalBreweryBikeClub.Model
 {
-    public class MemberInformation
+    public class SiteState
     {
         [Key]
-        public string Email
+        public int Id {get;set;}
+
+        public virtual Note Note
         {
-            get; set;
+            get;
+            set;
         }
     }
 }

@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CapitalBreweryBikeClub.Model
 {
-    public sealed class Note
+    public class Note
     {
         [Key]
-        public int ID
+        public int Id
         {
             get; set;
         }
@@ -24,7 +24,7 @@ namespace CapitalBreweryBikeClub.Model
         }
 
         [Required()]
-        public MemberInformation CreatedBy
+        public virtual MemberInformation CreatedBy
         {
             get; set;
         }

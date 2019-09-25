@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using CapitalBreweryBikeClub.Data;
 using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace CapitalBreweryBikeClub.Pages.Admin
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         public IEnumerable<RouteInfo> Routes
@@ -65,14 +68,12 @@ namespace CapitalBreweryBikeClub.Pages.Admin
 
         private readonly RouteProvider routeProvider;
         private readonly RouteDatabaseContext dbContext;
-        private readonly NotesService notesService;
 
-        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider, RouteDatabaseContext dbContext, NotesService notesService)
+        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider, RouteDatabaseContext dbContext)
         {
             this.routeProvider = routeProvider;
             ScheduleProvider = scheduleProvider;
             this.dbContext = dbContext;
-            this.notesService = notesService;
             Routes = routeProvider.Routes.Values;
         }
 
@@ -80,18 +81,25 @@ namespace CapitalBreweryBikeClub.Pages.Admin
         {
             SelectableRoutes = Routes.Select(info => new SelectListItem(info.Name, info.Name));
             SelectableDates = DaysInWeek(DateTime.Today, DayOfWeek.Tuesday, DayOfWeek.Thursday).Take(20);
-            CurrentNote = notesService.CurrentNote;
+            CurrentNote = dbContext.SiteState.FirstOrDefault()?.Note;
             NoteText = CurrentNote?.Text ?? string.Empty;
         }
 
-        public void OnPostClearNote()
+        public IActionResult OnPostClearNote()
         {
-            notesService.ClearCurrentNote();
+            var state = dbContext.SiteState.Include(state => state.Note).First().Note = null;
+            dbContext.SaveChanges();
+
+            return Page();
         }
 
-        public void OnPostUpdateNote()
+        public IActionResult OnPostUpdateNote()
         {
-            notesService.AddNote(new Note() { Text = NoteText, Created = DateTime.Now, CreatedBy = dbContext.Members.FirstOrDefault() });
+            var note = new Note() { Text = NoteText, Created = DateTime.Now, CreatedBy = dbContext.Members.FirstOrDefault() };
+            dbContext.SiteState.First().Note = note;
+            dbContext.SaveChanges();
+
+            return Page();
         }
 
         public void OnPostRefreshRoutes()
