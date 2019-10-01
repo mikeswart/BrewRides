@@ -107,6 +107,20 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             routeProvider.Refresh();
         }
 
+        public async Task<IActionResult> OnPostAddCustomAsync(string customRouteName, string customRouteRideWithGPSId)
+        {
+            if (!DateTime.TryParse(DateToAdd, out var dateToAdd))
+            {
+                return Page();
+            }
+
+            var links = new RideWithGpsLinks(customRouteRideWithGPSId);
+            var routeInfo = new RouteInfo(customRouteName, links.Page, "0", string.Empty, customRouteRideWithGPSId, true);
+
+            ScheduleProvider.AddOrReplace(new DailyRouteSchedule(dateToAdd, routeInfo));
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostScheduleRouteAsync()
         {
             if (!DateTime.TryParse(DateToAdd, out var dateToAdd))

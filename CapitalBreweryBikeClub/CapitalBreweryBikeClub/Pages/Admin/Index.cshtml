@@ -41,7 +41,15 @@
     <form method="post" asp-page-handler="ScheduleRoute">
         <select asp-for="DateToAdd" asp-items="Model.SelectableDates"></select>
         <select asp-for="RouteToAdd" asp-items="Model.SelectableRoutes"></select>
-        <button class="btn">Add</button>
+        <div>
+            <div>
+                Custom Route
+            </div>
+            Name: <input type="text" name="customRouteName"/>
+            Ride with GPS identifier: <input type="text" name="customRouteRideWithGPSId" size="8"/>
+        </div>
+        <button class="btn btn-primary">Add</button>
+        <button class="btn btn-secondary" asp-page-handler="AddCustom">Add Custom</button>
     </form>
 
     <h3>User Management</h3>
