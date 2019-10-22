@@ -16,16 +16,6 @@ namespace CapitalBreweryBikeClub.Pages.Admin
     [Authorize]
     public class IndexModel : PageModel
     {
-        public IEnumerable<RouteInfo> Routes
-        {
-            get;
-        }
-
-        public ScheduleProvider ScheduleProvider
-        {
-            get;
-        }
-
         [BindProperty]
         public string RouteToAdd
         {
@@ -66,22 +56,26 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             private set;
         }
 
-        private readonly RouteProvider routeProvider;
+        // public IEnumerable<RouteData> Routes
+        // {
+        //     get;
+        // }
+
         private readonly RouteDatabaseContext dbContext;
 
-        public IndexModel(RouteProvider routeProvider, ScheduleProvider scheduleProvider, RouteDatabaseContext dbContext)
+        public IndexModel(RouteDatabaseContext dbContext)
         {
-            this.routeProvider = routeProvider;
-            ScheduleProvider = scheduleProvider;
             this.dbContext = dbContext;
-            Routes = routeProvider.Routes.Values;
         }
 
-        public void OnGet()
+        public async void OnGetAsync()
         {
-            SelectableRoutes = Routes.Select(info => new SelectListItem(info.Name, info.Name));
+            // SelectableRoutes = Routes.Select(info => new SelectListItem(info.Name, info.Name));
+            var routes = await dbContext.Routes.ToListAsync();
+            SelectableRoutes = routes.Select(route => new SelectListItem(route.Name, route.Name));
+
             SelectableDates = DaysInWeek(DateTime.Today, DayOfWeek.Tuesday, DayOfWeek.Thursday).Take(20);
-            CurrentNote = dbContext.SiteState.FirstOrDefault()?.Note;
+            CurrentNote = (await dbContext.SiteState.FirstOrDefaultAsync())?.Note;
             NoteText = CurrentNote?.Text ?? string.Empty;
         }
 
@@ -104,7 +98,8 @@ namespace CapitalBreweryBikeClub.Pages.Admin
 
         public void OnPostRefreshRoutes()
         {
-            routeProvider.Refresh();
+            // TODO: Not needed?
+            // routeProvider.Refresh();
         }
 
         public async Task<IActionResult> OnPostAddCustomAsync(string customRouteName, string customRouteRideWithGPSId)
@@ -114,11 +109,26 @@ namespace CapitalBreweryBikeClub.Pages.Admin
                 return Page();
             }
 
-            var links = new RideWithGpsLinks(customRouteRideWithGPSId);
-            var routeInfo = new RouteInfo(customRouteName, links.Page, "0", string.Empty, customRouteRideWithGPSId, true);
+            // ScheduleProvider.AddOrReplace(new DailyRouteSchedule(dateToAdd, routeInfo));
+            var routeData = new RouteData() { Name = customRouteName, RideWithGpsId = customRouteRideWithGPSId };
+            await AddOrReplaceSchedule(dateToAdd, routeData);
 
-            ScheduleProvider.AddOrReplace(new DailyRouteSchedule(dateToAdd, routeInfo));
             return Page();
+        }
+
+        private async Task AddOrReplaceSchedule(DateTime dateToAdd, RouteData routeData)
+        {
+            // TODO: This could be a large DB operation as everything needs to be queried.
+            var existingRoute = await dbContext.Schedules.FirstOrDefaultAsync(schedule => schedule.Date.Date == dateToAdd.Date);
+            if (existingRoute != null)
+            {
+                existingRoute.RouteData = routeData;
+                dbContext.Schedules.Update(existingRoute);
+            }
+            else
+            {
+                await dbContext.Schedules.AddAsync(new ScheduleData() { Date = dateToAdd, RouteData = routeData });
+            }
         }
 
         public async Task<IActionResult> OnPostScheduleRouteAsync()
@@ -128,13 +138,29 @@ namespace CapitalBreweryBikeClub.Pages.Admin
                 return Page();
             }
 
-            var routeToAdd = Routes.FirstOrDefault(info => info.Name.Equals(RouteToAdd));
+            var routeToAdd = await dbContext.Routes.FirstOrDefaultAsync(info => info.Name.Equals(RouteToAdd));
             if (routeToAdd == null)
             {
                 return Page();
             }
 
-            ScheduleProvider.AddOrReplace(new DailyRouteSchedule(dateToAdd.Date, routeToAdd));
+            // ScheduleProvider.AddOrReplace(new DailyRouteSchedule(dateToAdd.Date, routeToAdd));
+            // TODO: This is rough
+            var existingDate = await dbContext.Schedules.FirstOrDefaultAsync(schedule => schedule.Date.Date.Equals(dateToAdd.Date));
+            if(existingDate != null)
+            {
+                existingDate.RouteData = routeToAdd;
+            }
+            else
+            {
+                dbContext.Schedules.Add(new ScheduleData
+                {
+                    Date = dateToAdd.Date,
+                    RouteData = routeToAdd
+                });
+            }
+
+            await dbContext.SaveChangesAsync();
 
             return RedirectToPage();
         }
@@ -153,7 +179,8 @@ namespace CapitalBreweryBikeClub.Pages.Admin
 
                 if (daysOfWeek.Contains(currentDay.DayOfWeek))
                 {
-                    var existingRoutes = string.Join(", ", ScheduleProvider.Get(currentDay, TimeSpan.FromDays(1)).Select(schedule => schedule.Route.Name));
+                    var routeForDay = dbContext.Schedules.FirstOrDefault(schedule => schedule.Date.Date == currentDay.Date)?.RouteData.Name ?? string.Empty;
+                    var existingRoutes = string.Join(", ", routeForDay);
                     var scheduledRoutes = string.IsNullOrEmpty(existingRoutes) ? string.Empty : $" - ({existingRoutes})";
                     yield return new SelectListItem($"{currentDay:dddd M-d}{scheduledRoutes}", currentDay.Date.ToString())
                     {

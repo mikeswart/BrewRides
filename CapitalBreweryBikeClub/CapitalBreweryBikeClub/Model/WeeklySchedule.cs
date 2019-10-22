@@ -7,9 +7,9 @@ namespace CapitalBreweryBikeClub.Model
     {
         public DateTime BeginningOfWeek { get; }
 
-        public IEnumerable<DailyRouteSchedule> Routes { get; }
+        public IEnumerable<ScheduleData> Routes { get; }
 
-        public WeeklySchedule(DateTime beginningOfWeek, IEnumerable<DailyRouteSchedule> routes)
+        public WeeklySchedule(DateTime beginningOfWeek, IEnumerable<ScheduleData> routes)
         {
             BeginningOfWeek = beginningOfWeek;
             Routes = routes;

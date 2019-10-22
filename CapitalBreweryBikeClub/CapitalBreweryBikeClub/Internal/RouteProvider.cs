@@ -11,73 +11,87 @@ using Newtonsoft.Json.Linq;
 
 namespace CapitalBreweryBikeClub.Internal
 {
-    public class RouteProvider
-    {
-        private readonly IConfiguration configuration;
-        private readonly IServiceScopeFactory scopeFactory;
+    // public class RouteProvider
+    // {
+    //     private readonly IConfiguration configuration;
+    //     private readonly IServiceScopeFactory scopeFactory;
 
-        public IImmutableDictionary<string, RouteInfo> Routes
-        {
-            get;
-            private set;
-        }
+    //     public IImmutableDictionary<string, RouteInfo> Routes
+    //     {
+    //         get => routes;
+    //     }
 
-        public RouteProvider(IConfiguration configuration, IServiceScopeFactory scopeFactory)
-        {
-            this.configuration = configuration;
-            this.scopeFactory = scopeFactory;
+    //     private IDictionary<string, RouteInfo> routes;
 
-            using var _ = scopeFactory.CreateDatabaseContextScope(out RouteDatabaseContext dbContext);
-            ReloadRoutesFromDatabase(dbContext);
-        }
+    //     public RouteProvider(IConfiguration configuration, IServiceScopeFactory scopeFactory)
+    //     {
+    //         this.configuration = configuration;
+    //         this.scopeFactory = scopeFactory;
 
-        public void Refresh()
-        {
-            using var _ = scopeFactory.CreateDatabaseContextScope(out RouteDatabaseContext dbContext);
+    //         using var _ = scopeFactory.CreateDatabaseContextScope(out RouteDatabaseContext dbContext);
+    //         ReloadRoutesFromDatabase(dbContext);
+    //     }
 
-            var routes = new RouteWebProvider(configuration).GetRoutesFromWeb().Result;
-            dbContext.Routes.Clear();
+    //     public RouteInfo Add(RouteData routeData)
+    //     {
+    //         using var _ = scopeFactory.CreateDatabaseContextScope(out RouteDatabaseContext dbContext);
+    //         dbContext.Add(routeData);
 
-            // When there are duplicate entries in the data source, this will throw an exception.
-            dbContext.Routes.AddRange(routes.Select(info => info.GetRouteData()).ToList());
-            dbContext.SaveChanges();
+    //         var routeInfo = new RouteInfo(routeData);
 
-            ReloadRoutesFromDatabase(dbContext);
-        }
+    //         routes.Add(RouteInfo.GetWebFriendlyName(routeData.Name), routeInfo);
 
-        private void ReloadRoutesFromDatabase(RouteDatabaseContext dbContext)
-        {
-            Routes = dbContext.Routes.Select(routeData => new RouteInfo(routeData))
-                .ToImmutableDictionary(info => RouteInfo.GetWebFriendlyName(info.Name));
-        }
+    //         return routeInfo;
+    //     }
 
-        private sealed class RouteWebProvider
-        {
-            private readonly string apiKey;
+    //     public void Refresh()
+    //     {
+    //         using var _ = scopeFactory.CreateDatabaseContextScope(out RouteDatabaseContext dbContext);
 
-            public RouteWebProvider(IConfiguration configuration)
-            {
-                apiKey = configuration["GoogleSheets:ApiKey"];
-            }
+    //         var routes = new RouteWebProvider(configuration).GetRoutesFromWeb().Result;
+    //         dbContext.Routes.Clear();
 
-            public async Task<IEnumerable<RouteInfo>> GetRoutesFromWeb()
-            {
-                return (await Task.WhenAll(GetRouteInfo("long"), GetRouteInfo("short"))).SelectMany(infos => infos.ToArray());
-            }
+    //         // When there are duplicate entries in the data source, this will throw an exception.
+    //         dbContext.Routes.AddRange(routes.Select(info => info.GetRouteData()).ToList());
+    //         dbContext.SaveChanges();
 
-            private async Task<IEnumerable<RouteInfo>> GetRouteInfo(string tableName)
-            {
-                using var httpClient = new HttpClient();
-                var resultsJson = await httpClient.GetStringAsync($"https://sheets.googleapis.com/v4/spreadsheets/1zgT74PMvCWC4LGKk_lVo7qN1gmpuNXWmcsuYg4PU7Fo/values/{tableName}?key={apiKey}");
-                var jObject = JObject.Parse(resultsJson);
+    //         ReloadRoutesFromDatabase(dbContext);
+    //     }
 
-                return jObject["values"].Skip(1).Select(RouteInfoFactory);
+    //     private void ReloadRoutesFromDatabase(RouteDatabaseContext dbContext)
+    //     {
+    //         routes = dbContext.Routes
+    //             .Select(routeData => new RouteInfo(routeData))
+    //             .ToDictionary(info => RouteInfo.GetWebFriendlyName(info.Name));
+    //     }
 
-                RouteInfo RouteInfoFactory(JToken token)
-                {
-                    return new RouteInfo((string)token[0], (string)token[1], (string)token[2], (string)token[3], (string)token[4], true);
-                }
-            }
-        }
-    }
+    //     private sealed class RouteWebProvider
+    //     {
+    //         private readonly string apiKey;
+
+    //         public RouteWebProvider(IConfiguration configuration)
+    //         {
+    //             apiKey = configuration["GoogleSheets:ApiKey"];
+    //         }
+
+    //         public async Task<IEnumerable<RouteInfo>> GetRoutesFromWeb()
+    //         {
+    //             return (await Task.WhenAll(GetRouteInfo("long"), GetRouteInfo("short"))).SelectMany(infos => infos.ToArray());
+    //         }
+
+    //         private async Task<IEnumerable<RouteInfo>> GetRouteInfo(string tableName)
+    //         {
+    //             using var httpClient = new HttpClient();
+    //             var resultsJson = await httpClient.GetStringAsync($"https://sheets.googleapis.com/v4/spreadsheets/1zgT74PMvCWC4LGKk_lVo7qN1gmpuNXWmcsuYg4PU7Fo/values/{tableName}?key={apiKey}");
+    //             var jObject = JObject.Parse(resultsJson);
+
+    //             return jObject["values"].Skip(1).Select(RouteInfoFactory);
+
+    //             RouteInfo RouteInfoFactory(JToken token)
+    //             {
+    //                 return new RouteInfo((string)token[0], (string)token[1], (string)token[2], (string)token[3], (string)token[4], true);
+    //             }
+    //         }
+    //     }
+    // }
 }

@@ -26,7 +26,7 @@ namespace MyApp.Namespace
             this.dbContext = dbContext;
         }
 
-        public async Task<IActionResult> OnPostSignoutAsync()
+        public IActionResult OnPostSignout()
         {
             return RedirectToPage("/Account/Signout");
         }
@@ -54,7 +54,7 @@ namespace MyApp.Namespace
             var identity = new ClaimsIdentity(
                 new[] { new Claim(ClaimTypes.Name, Input.Email) },
                 CookieAuthenticationDefaults.AuthenticationScheme);
-                
+
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity),
                 props);

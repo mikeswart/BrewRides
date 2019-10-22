@@ -1,31 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CapitalBreweryBikeClub.Internal;
+using CapitalBreweryBikeClub.Data;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace CapitalBreweryBikeClub.Pages.Routes
 {
     [Authorize]
     public class IndexModel : PageModel
     {
-        public IEnumerable<(RouteInfo info, string link)> Routes
+        public IEnumerable<(RouteData info, string link)> Routes
         {
             get;
             private set;
         }
 
-        private readonly RouteProvider routeProvider;
+        private readonly RouteDatabaseContext databaseContext;
 
-        public IndexModel(RouteProvider routeProvider)
+        public IndexModel(RouteDatabaseContext databaseContext)
         {
-            this.routeProvider = routeProvider;
+            this.databaseContext = databaseContext;
         }
 
-        public void OnGet()
+        public async void OnGetAsync()
         {
-            Routes = routeProvider.Routes.Values.Select(info => (info, RouteInfo.GetWebFriendlyName(info.Name)));
+            var routes =  await databaseContext.Routes.ToListAsync();
+
+            Routes = routes.Select(routeData => (routeData, RouteInfo.GetWebFriendlyName(routeData.Name)));
         }
     }
 }

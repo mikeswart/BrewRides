@@ -34,8 +34,8 @@ namespace CapitalBreweryBikeClub
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => options.LoginPath = "/account/CustomLogin");
 
-            services.AddSingleton<RouteProvider>();
-            services.AddSingleton<ScheduleProvider>();
+            // services.AddSingleton<RouteProvider>();
+            // services.AddSingleton<ScheduleProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 

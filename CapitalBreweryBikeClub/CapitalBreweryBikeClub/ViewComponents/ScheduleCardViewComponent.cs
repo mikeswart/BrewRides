@@ -1,15 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using CapitalBreweryBikeClub.Model;
+﻿using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CapitalBreweryBikeClub.ViewComponents
 {
     public class ScheduleCardViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(DailyRouteSchedule routeSchedule)
+        public IViewComponentResult Invoke(ScheduleData scheduleData)
         {
-            return View(routeSchedule);
+            return View(new DailyRouteSchedule(scheduleData));
         }
     }
 }

@@ -1,17 +1,20 @@
-﻿@model CapitalBreweryBikeClub.Model.DailyRouteSchedule
+﻿@model CapitalBreweryBikeClub.Model.ScheduleData
+@{
+    var links = new CapitalBreweryBikeClub.Model.RideWithGpsLinks(@Model.RouteData.RideWithGpsId);
+}
 
 <div class="card route-card">
-    @if (Model.DateTime != DateTime.MinValue)
+    @if (Model.Date != DateTime.MinValue)
     {
         <h5 class="card-header">
-            @Model.DateTime.ToString("dddd")
+            @Model.Date.ToString("dddd")
         </h5>
     }
     <div class="card-body">
-        <iframe src=@Model.Links.EmbedLink scrolling="no" frameborder="0"></iframe>
+        <iframe src=@links.EmbedLink scrolling="no" frameborder="0"></iframe>
     </div>
     <div class="card-footer">
-        <a href="@Model.Links.FitLink" class="btn btn-primary">.FIT</a>
-        <a href="@Model.Links.CueLink" class="btn btn-primary">Cue</a>
+        <a href="@links.FitLink" class="btn btn-primary">.FIT</a>
+        <a href="@links.CueLink" class="btn btn-primary">Cue</a>
     </div>
 </div>

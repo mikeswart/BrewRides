@@ -6,15 +6,15 @@ namespace CapitalBreweryBikeClub.Model
     {
         public DateTime DateTime { get; }
 
-        public RouteInfo Route { get; }
+        public RouteData Route { get; }
 
         public RideWithGpsLinks Links { get; }
 
-        public DailyRouteSchedule(DateTime dateTime, RouteInfo route)
+        public DailyRouteSchedule(ScheduleData scheduleData)
         {
-            DateTime = dateTime;
-            Route = route;
-            Links = new RideWithGpsLinks(route);
+            DateTime = scheduleData.Date;
+            Route = scheduleData.RouteData;
+            Links = new RideWithGpsLinks(scheduleData.RouteData.RideWithGpsId);
         }
     }
 }

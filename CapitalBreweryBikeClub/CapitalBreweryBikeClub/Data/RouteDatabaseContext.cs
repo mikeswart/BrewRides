@@ -17,6 +17,11 @@ namespace CapitalBreweryBikeClub.Data
             get; set;
         }
 
+        public DbSet<ScheduleData> Schedules
+        {
+            get; set;
+        }
+
         public DbSet<MemberInformation> Members
         {
             get; set;

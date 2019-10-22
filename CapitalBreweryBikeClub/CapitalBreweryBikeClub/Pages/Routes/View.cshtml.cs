@@ -1,37 +1,43 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using CapitalBreweryBikeClub.Data;
-using CapitalBreweryBikeClub.Internal;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace CapitalBreweryBikeClub.Pages.Routes
 {
     public class ViewModel : PageModel
     {
-        public DailyRouteSchedule Route { get; private set; }
+        public RouteData Route { get; private set; }
 
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly RouteDatabaseContext databaseContext;
 
-        public ViewModel(IServiceScopeFactory scopeFactory)
+        public ViewModel(RouteDatabaseContext databaseContext)
         {
-            this.scopeFactory = scopeFactory;
+            this.databaseContext = databaseContext;
         }
 
-        public IActionResult OnGet(string routeName)
+        public async Task<IActionResult> OnGetAsync(string routeName)
         {
-            //using var _ = scopeFactory.CreateDatabaseContextScope(out BrewRideDatabaseContext databaseContext);
-            //var route = databaseContext.Routes.FirstOrDefault(info => RouteInfo.GetWebFriendlyName(info.Name).Equals(routeName, StringComparison.InvariantCultureIgnoreCase));
+            Route = await FindRouteAsync(routeName);
 
-            //if (route == null)
-            //{
-            //    return NotFound();
-            //}
+            if (Route == null)
+            {
+               return NotFound();
+            }
 
-            //Route = new DailyRouteSchedule(DateTime.MinValue, route);
             return Page();
+        }
+
+        private async Task<RouteData> FindRouteAsync(string routeName)
+        {
+            // TODO: In the future it would be advantagous to keep a cache of routes that we know about and get the ID directly
+            // when the caches misses, then we need to do the full search (like this)
+
+            var routes = await databaseContext.Routes.ToListAsync();
+            return routes.FirstOrDefault(route => RouteInfo.GetWebFriendlyName(route.Name).Equals(routeName, System.StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }
