@@ -18,7 +18,7 @@ namespace CapitalBreweryBikeClub.Model
         }
 
         [Required]
-        public RouteData RouteData
+        public virtual RouteData RouteData
         {
             get; set;
         }
