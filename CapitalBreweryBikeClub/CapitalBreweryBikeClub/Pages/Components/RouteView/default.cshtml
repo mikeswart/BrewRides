@@ -1,0 +1,13 @@
+@model CapitalBreweryBikeClub.Model.RouteData
+@{
+    var links = new CapitalBreweryBikeClub.Model.RideWithGpsLinks(@Model.RideWithGpsId);
+}
+<div class="card route-card">
+    <div class="card-body">
+        <iframe src=@links.EmbedLink scrolling="no" frameborder="0"></iframe>
+    </div>
+    <div class="card-footer">
+        <a href="@links.FitLink" class="btn btn-primary">.FIT</a>
+        <a href="@links.CueLink" class="btn btn-primary">Cue</a>
+    </div>
+</div>

@@ -44,22 +44,19 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             set;
         }
 
+        [BindProperty]
         public IEnumerable<SelectListItem> SelectableRoutes
         {
             get;
             private set;
         }
 
+        [BindProperty]
         public IEnumerable<SelectListItem> SelectableDates
         {
             get;
             private set;
         }
-
-        // public IEnumerable<RouteData> Routes
-        // {
-        //     get;
-        // }
 
         private readonly RouteDatabaseContext dbContext;
 
@@ -68,14 +65,13 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             this.dbContext = dbContext;
         }
 
-        public async void OnGetAsync()
+        public void OnGet()
         {
-            // SelectableRoutes = Routes.Select(info => new SelectListItem(info.Name, info.Name));
-            var routes = await dbContext.Routes.ToListAsync();
+            var routes = dbContext.Routes.ToList();
             SelectableRoutes = routes.Select(route => new SelectListItem(route.Name, route.Name));
 
             SelectableDates = DaysInWeek(DateTime.Today, DayOfWeek.Tuesday, DayOfWeek.Thursday).Take(20);
-            CurrentNote = (await dbContext.SiteState.FirstOrDefaultAsync())?.Note;
+            CurrentNote =  dbContext.SiteState.FirstOrDefault()?.Note;
             NoteText = CurrentNote?.Text ?? string.Empty;
         }
 
@@ -84,6 +80,7 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             var state = dbContext.SiteState.Include(state => state.Note).First().Note = null;
             dbContext.SaveChanges();
 
+            OnGet();
             return Page();
         }
 
@@ -93,6 +90,7 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             dbContext.SiteState.First().Note = note;
             dbContext.SaveChanges();
 
+            OnGet();
             return Page();
         }
 
@@ -129,6 +127,8 @@ namespace CapitalBreweryBikeClub.Pages.Admin
             {
                 await dbContext.Schedules.AddAsync(new ScheduleData() { Date = dateToAdd, RouteData = routeData });
             }
+
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task<IActionResult> OnPostScheduleRouteAsync()

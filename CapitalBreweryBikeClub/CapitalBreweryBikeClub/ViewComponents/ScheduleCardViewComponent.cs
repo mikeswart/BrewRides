@@ -7,7 +7,7 @@ namespace CapitalBreweryBikeClub.ViewComponents
     {
         public IViewComponentResult Invoke(ScheduleData scheduleData)
         {
-            return View(new DailyRouteSchedule(scheduleData));
+            return View(scheduleData);
         }
     }
 }

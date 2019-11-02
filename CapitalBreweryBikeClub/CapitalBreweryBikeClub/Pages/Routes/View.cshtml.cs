@@ -12,6 +12,8 @@ namespace CapitalBreweryBikeClub.Pages.Routes
     {
         public RouteData Route { get; private set; }
 
+        public ScheduleData RouteEx { get; private set; }
+
         private readonly RouteDatabaseContext databaseContext;
 
         public ViewModel(RouteDatabaseContext databaseContext)
@@ -21,7 +23,9 @@ namespace CapitalBreweryBikeClub.Pages.Routes
 
         public async Task<IActionResult> OnGetAsync(string routeName)
         {
+            // TODO: This is just wrong - We should be able to build the model from the backing data objects
             Route = await FindRouteAsync(routeName);
+            RouteEx = new ScheduleData() { RouteData = Route };
 
             if (Route == null)
             {

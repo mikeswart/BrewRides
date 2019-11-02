@@ -1,7 +1,4 @@
 ﻿@model CapitalBreweryBikeClub.Model.ScheduleData
-@{
-    var links = new CapitalBreweryBikeClub.Model.RideWithGpsLinks(@Model.RouteData.RideWithGpsId);
-}
 
 <div class="card route-card">
     @if (Model.Date != DateTime.MinValue)
@@ -10,11 +7,5 @@
             @Model.Date.ToString("dddd")
         </h5>
     }
-    <div class="card-body">
-        <iframe src=@links.EmbedLink scrolling="no" frameborder="0"></iframe>
-    </div>
-    <div class="card-footer">
-        <a href="@links.FitLink" class="btn btn-primary">.FIT</a>
-        <a href="@links.CueLink" class="btn btn-primary">Cue</a>
-    </div>
+    @await Component.InvokeAsync("RouteView", @Model.RouteData)
 </div>

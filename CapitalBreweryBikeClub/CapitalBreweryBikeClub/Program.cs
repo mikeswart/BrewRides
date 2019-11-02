@@ -15,7 +15,9 @@ namespace CapitalBreweryBikeClub
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                    .UseEnvironment("Development")
+                    .UseStartup<Startup>();
                 });
     }
 }

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Diagnostics;
+using System;
 
 namespace CapitalBreweryBikeClub
 {
@@ -23,6 +25,8 @@ namespace CapitalBreweryBikeClub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.Write("Db Context : "+ Configuration["ConnectionStrings:BrewRidesDatabaseContext"]);
+
             services.AddDbContext<RouteDatabaseContext>(options => {
                 options.UseSqlServer(Configuration["ConnectionStrings:BrewRidesDatabaseContext"])
                 .UseLazyLoadingProxies();

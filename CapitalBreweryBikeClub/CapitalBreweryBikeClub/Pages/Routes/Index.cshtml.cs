@@ -4,7 +4,6 @@ using CapitalBreweryBikeClub.Data;
 using CapitalBreweryBikeClub.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace CapitalBreweryBikeClub.Pages.Routes
 {
@@ -24,11 +23,11 @@ namespace CapitalBreweryBikeClub.Pages.Routes
             this.databaseContext = databaseContext;
         }
 
-        public async void OnGetAsync()
+        public void OnGet()
         {
-            var routes =  await databaseContext.Routes.ToListAsync();
+            var routes = databaseContext.Routes.ToList();
 
-            Routes = routes.Select(routeData => (routeData, RouteInfo.GetWebFriendlyName(routeData.Name)));
+            Routes = routes.Select(routeData => (routeData, RouteInfo.GetWebFriendlyName(routeData.Name))).ToList();
         }
     }
 }
