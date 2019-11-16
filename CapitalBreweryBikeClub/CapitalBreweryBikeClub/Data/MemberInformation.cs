@@ -9,5 +9,10 @@ namespace CapitalBreweryBikeClub.Model
         {
             get; set;
         }
+
+        public override string ToString()
+        {
+            return Email;
+        }
     }
 }

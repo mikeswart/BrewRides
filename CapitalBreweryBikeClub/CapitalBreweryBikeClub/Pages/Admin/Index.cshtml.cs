@@ -77,7 +77,7 @@ namespace CapitalBreweryBikeClub.Pages.Admin
 
         public IActionResult OnPostClearNote()
         {
-            var state = dbContext.SiteState.Include(state => state.Note).First().Note = null;
+            dbContext.SiteState.Include(state => state.Note).First().Note = null;
             dbContext.SaveChanges();
 
             OnGet();

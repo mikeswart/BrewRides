@@ -15,5 +15,8 @@
 <div class="centeredtext">
     @await Component.InvokeAsync("RouteView", @Model.Route)
 </div>
+@if(User.IsInRole(CapitalBreweryBikeClub.Internal.Roles.Admin))
+{
+}
 </body>
 </html>
