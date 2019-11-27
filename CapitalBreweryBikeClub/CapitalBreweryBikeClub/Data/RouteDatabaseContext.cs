@@ -39,13 +39,23 @@ namespace CapitalBreweryBikeClub.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var members = Enumerable.Empty<MemberInformation>();
             if (File.Exists(SeedFileNames.Members))
             {
-                modelBuilder.Entity<MemberInformation>().HasData(
-                    File.ReadLines(SeedFileNames.Members)
+                members = File.ReadLines(SeedFileNames.Members)
                         .Where(line => !string.IsNullOrWhiteSpace(line))
-                        .Select(line => new MemberInformation { Email = line }));
+                        .Select(line => new MemberInformation { Email = line, Admin = false });
             }
+
+            var admins = Enumerable.Empty<MemberInformation>();
+            if(File.Exists(SeedFileNames.Admins))
+            {
+                admins = File.ReadLines(SeedFileNames.Admins)
+                        .Where(line => !string.IsNullOrWhiteSpace(line))
+                        .Select(line => new MemberInformation { Email = line, Admin = true });
+            }
+
+            modelBuilder.Entity<MemberInformation>().HasData(members.Concat(admins));
 
             modelBuilder.Entity<SiteState>().HasData(new SiteState() { Id = 1 });
         }
@@ -53,6 +63,7 @@ namespace CapitalBreweryBikeClub.Data
         private static class SeedFileNames
         {
             public static readonly string Members = "members.seed";
+            public static readonly string Admins = "admins.seed";
         }
     }
 }

@@ -55,7 +55,10 @@ namespace MyApp.Namespace
                 new[] { new Claim(ClaimTypes.Name, Input.Email) },
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
-                identity.AddClaim(new Claim(ClaimTypes.Role, CapitalBreweryBikeClub.Internal.Roles.Admin));
+                if(Input.Email.Equals("mike.swart@gmail.com", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Role, CapitalBreweryBikeClub.Internal.Roles.Admin));
+                }
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity),

@@ -10,6 +10,11 @@ namespace CapitalBreweryBikeClub.Model
             get; set;
         }
 
+        public bool Admin
+        {
+            get; set;
+        }
+
         public override string ToString()
         {
             return Email;
