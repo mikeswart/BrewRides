@@ -2,3 +2,13 @@
 @model MyApp.Namespace.DeleteModel
 @{
 }
+
+<div>
+    <form method="POST" asp-page-handler="Confirm" >
+        <div>
+            Really?
+        </div>
+        <button type="submit" asp-page-handler="Confirm">Confirm</button>
+        <button type="submit" asp-page-handler="Cancel">Cancel</button>
+    </form>
+</div>

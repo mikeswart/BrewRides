@@ -14,6 +14,7 @@ namespace CapitalBreweryBikeClub.Pages
             get;
             private set;
         }
+
         private readonly RouteDatabaseContext databaseContext;
 
         public IndexModel(RouteDatabaseContext databaseContext)
